@@ -26,16 +26,7 @@ and open the template in the editor.
                 $pizzaCrust = "";
                 $pizzaSauce = "";
                 $pizzaSize = "";
-                $arrPizzatoppings;
-                    if(isset($_POST["formSubmitButton"]))
-                    {    
-                        $pizzaCrust = $_POST["formCrustDropDown"];
-                        $pizzaSauce = $_POST["formSauceDropDown"];
-                        $pizzaSize = $_POST["formSizeDropDown"];                    
-                       /* echo "<p>$pizzaCrust</p>";
-                        echo "<p>$pizzaSauce</p>";
-                        echo "<p>$pizzaSize</p>";*/
-                    }
+                $arrPizzatoppings;                    
                 ?>
             <div id="CrustSelector" style=" float:left;">
              <div id="CrustText" style=" border: thick solid white; width: 120px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
@@ -69,8 +60,6 @@ and open the template in the editor.
                     <option <?php if($pizzaSauce == "Pes"){ echo "selected";} ?> value="Pes">Pesto</option>
                 </select>
                  
-                <?php
-                ?>
              </div>
             </div>
             <div style="width: 30px; float:left; padding:2px;"></div>
@@ -103,7 +92,7 @@ and open the template in the editor.
                         <option value="">Select...</option>
                         <?php 
                         //In future, pull from a Topping database for this.
-                        $arrToppings = array("pepp"=>"Pepperoni","che"=>"Cheese","saus"=>"Sausage","grpep"=>"Green Bell Peppers","onion"=>"Onions");
+                        $arrToppings = array("pepperoni"=>"Pepperoni","cheese"=>"Cheese","sausage"=>"Sausage","greenpeppers"=>"Green Bell Peppers","onions"=>"Onions");
                         foreach($arrToppings as $topValue => $topName)
                         {
                             echo "<option value='$topValue'>".$topName."</option>";
@@ -116,13 +105,77 @@ and open the template in the editor.
                  </div>
             </div>
             <div style="font-size: medium; font-family:Comic Sans MS; font-weight: bold; color: white;">
-                <input type="radio" name="radToppingCoverage" value="whole"  /> Whole <br>
+                <input type="radio" name="radToppingCoverage" value="whole" selected  /> Whole <br>
                 <input type="radio" name="radToppingCoverage" value="half" /> Half <br>
                 <input type="submit" name="formAddTopping" value="Add Topping" />
             <br><br>
             <input type="submit" name="formSubmitButton" value="Submit" />
                 
             </div>
+            
+            <?php
+            $arrCurrentToppings;
+            
+            $intNumToppings;
+            if(isSet($_POST['transNumToppings']))
+            {
+                $intNumToppings = intval($_POST['transNumToppings']);
+            }
+            else
+            {
+                $intNumToppings = 0;
+            }
+            //And now for the gathering of information for a 2-D array as transferred via implode stuff.
+            //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            if($intNumToppings != 0)
+            {
+                //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                for($intToppingInputCounter = 0; $intToppingInputCounter < $intNumToppings; $intToppingInputCounter++)
+                {
+                    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                    $strArrayInput = $_POST['transTopping'.$intToppingInputCounter];
+                    $arrTempArray = explode("|",$strArrayInput);
+                    $arrCurrentToppings[] = $arrTempArray;
+                }
+            }
+            else
+            {
+                //AAAAAAAAAAAAAAA--Oh, it's done?
+                $arrCurrentToppings[] = array("Topping","Coverage");
+            }
+            
+            if(isSet($_POST["formAddTopping"]))
+            {
+                $strCoverage = $_POST['radToppingCoverage'];
+                $strToppingName = $_POST['formToppingDropDown'] ?: "";
+                if($strToppingName != "")
+                {
+                    $arrCurrentToppings[] = array($strToppingName, $strCoverage);
+                }
+            }
+            
+            //And now for transforming the array into a series of hidden inputs for transfer.
+            //..What, thought I was done screaming?
+            
+            if(isset($_POST["formAddTopping"]) or isset($_POST["formSubmitButton"]))
+            {
+                //Using it as a counter variable now.               
+                $intNumToppings = 0;
+                foreach($arrCurrentToppings as $arrTopping)
+                {
+                    $strArrayToString = implode("|",$arrTopping);
+                    echo "<input type='hidden' name='transTopping".$intNumToppings."' value='$strArrayToString' />";
+                    $intNumToppings++;
+                    echo $strArrayToString."<br>";
+                }
+                echo "<input type='hidden' name='transNumToppings' value='".$intNumToppings."' />";
+            }
+            else
+            {                
+                echo "<input type='hidden' name='transNumToppings' value='0' />";
+            }
+            ?>
         </form>
         
     </body>
