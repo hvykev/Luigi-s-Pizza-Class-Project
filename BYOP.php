@@ -26,14 +26,15 @@ and open the template in the editor.
                 $pizzaCrust = "";
                 $pizzaSauce = "";
                 $pizzaSize = "";
+                $arrPizzatoppings;
                     if(isset($_POST["formSubmitButton"]))
                     {    
                         $pizzaCrust = $_POST["formCrustDropDown"];
                         $pizzaSauce = $_POST["formSauceDropDown"];
                         $pizzaSize = $_POST["formSizeDropDown"];                    
-                        echo "<p>$pizzaCrust</p>";
+                       /* echo "<p>$pizzaCrust</p>";
                         echo "<p>$pizzaSauce</p>";
-                        echo "<p>$pizzaSize</p>";
+                        echo "<p>$pizzaSize</p>";*/
                     }
                 ?>
             <div id="CrustSelector" style=" float:left;">
@@ -91,7 +92,34 @@ and open the template in the editor.
                 
              </div>
             </div>
-            <div>
+            
+            <div style="width: 30px; float:left; padding:2px;"></div>
+             <div id="ToppingSelector" style=" float:left;">
+                <div id="ToppingText" style=" border: thick solid white; width: 180px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
+                Toppings                
+                </div>
+                <div>
+                    <select name="formToppingDropDown" style="width: 190px;">
+                        <option value="">Select...</option>
+                        <?php 
+                        //In future, pull from a Topping database for this.
+                        $arrToppings = array("pepp"=>"Pepperoni","che"=>"Cheese","saus"=>"Sausage","grpep"=>"Green Bell Peppers","onion"=>"Onions");
+                        foreach($arrToppings as $topValue => $topName)
+                        {
+                            echo "<option value='$topValue'>".$topName."</option>";
+                        }
+                        ?>
+                    </select> 
+                </div>
+                 <div style="float:left;">
+                     
+                 </div>
+            </div>
+            <div style="font-size: medium; font-family:Comic Sans MS; font-weight: bold; color: white;">
+                <input type="radio" name="radToppingCoverage" value="whole"  /> Whole <br>
+                <input type="radio" name="radToppingCoverage" value="half" /> Half <br>
+                <input type="submit" name="formAddTopping" value="Add Topping" />
+            <br><br>
             <input type="submit" name="formSubmitButton" value="Submit" />
                 
             </div>
