@@ -9,31 +9,42 @@ and open the template in the editor.
         <title>Luigi's BYOP</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+        p {text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;}
+        .bordered {border: thick solid white;}
+        .selectorSubWrapper {float:left;}
+        .filler {width: 30px; float:left; padding:2px;}        
+        .SelectorTextLabelBorderless {width: 140px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;}
+        .SelectorTextLabel {border: thick solid white; width: 140px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;}
+        .SelectorDropDown {width:150px;}
+        #selectorWrapperMain {overflow: hidden; position: relative; padding:20px;}
+        
+        </style>
     </head>
     <body style="background-color: slategray">
         <div style="text-align: center">[Nav Bar and Logo go here]</div>
         <br>
         <br>
         <br>
-        <div style="border: thick solid white">
-            <p style="text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
+        <div class='bordered'>
+            <p>
             Picture the Perfect Pie
             </p>
         </div>
         <br>
-        <form action='<?php echo $_SERVER["PHP_SELF"]; ?>' method="post" id="selectorWrapperMain" style="overflow: hidden; position: relative; padding:20px;">
+        <form action='<?php echo $_SERVER["PHP_SELF"]; ?>' method="post" id="selectorWrapperMain">
             <?php
                 $pizzaCrust = "";
                 $pizzaSauce = "";
                 $pizzaSize = "";
                 $arrPizzatoppings;                    
                 ?>
-            <div id="CrustSelector" style=" float:left;">
-             <div id="CrustText" style=" border: thick solid white; width: 120px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
+            <div id="CrustSelector" class="selectorSubWrapper">
+             <div id="CrustText" class="SelectorTextLabel">
                 Crust                
              </div>
              <div>
-                <select name="formCrustDropDown" style="width: 130px;">
+                <select name="formCrustDropDown" class="SelectorDropDown">
                     <option value="">Select...</option>
                     <option <?php if($pizzaCrust == "Thin"){ echo "selected";} ?> value="Thin">Thin</option>
                     <option <?php if($pizzaCrust == "Norm"){ echo "selected";} ?> value="Norm">Standard</option>
@@ -46,13 +57,13 @@ and open the template in the editor.
                 ?>
              </div>
             </div>
-            <div style="width: 30px; float:left; padding:2px;"></div>
-             <div id="SauceSelector" style=" float:left;">
-             <div id="SauceText" style=" border: thick solid white; width: 120px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
+            <div class='filler'></div>
+             <div id="SauceSelector" class="selectorSubWrapper">
+             <div id="SauceText" class="SelectorTextLabel">
                 Sauce                
              </div>
              <div>
-                <select name="formSauceDropDown" style="width: 130px;">
+                <select name="formSauceDropDown" class="SelectorDropDown">
                     <option value="">Select...</option>
                     <option <?php if($pizzaSauce == "Non"){ echo "selected";} ?> value="Non">None</option>
                     <option <?php if($pizzaSauce == "Red"){ echo "selected";} ?> value="Red">Classic Red</option>
@@ -62,13 +73,13 @@ and open the template in the editor.
                  
              </div>
             </div>
-            <div style="width: 30px; float:left; padding:2px;"></div>
-             <div id="SizeSelector" style=" float:left;">
-             <div id="SizeText" style=" border: thick solid white; width: 120px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
+            <div class='filler'></div>
+             <div id="SizeSelector" class="selectorSubWrapper">
+             <div id="SizeText" class="SelectorTextLabel">
                 Size                
              </div>
              <div>
-                <select name="formSizeDropDown" style="width: 130px;">
+                <select name="formSizeDropDown" class="SelectorDropDown">
                     <option value="">Select...</option>
                     <option <?php if($pizzaSize == "Per"){ echo "selected";} ?> value="Per">Personal (6")</option>
                     <option <?php if($pizzaSize == "Sml"){ echo "selected";} ?> value="Sml">Small (8")</option>
@@ -82,13 +93,13 @@ and open the template in the editor.
              </div>
             </div>
             
-            <div style="width: 30px; float:left; padding:2px;"></div>
-             <div id="ToppingSelector" style=" float:left;">
-                <div id="ToppingText" style=" border: thick solid white; width: 180px; padding-bottom: 5px; text-align: center; font-size: x-large; font-family:Comic Sans MS; font-weight: bold; color: white;">
+            <div class="filler"></div>
+             <div id="ToppingSelector" class="selectorSubWrapper">
+                <div id="ToppingText" class="SelectorTextLabel">
                 Toppings                
                 </div>
                 <div>
-                    <select name="formToppingDropDown" style="width: 190px;">
+                    <select name="formToppingDropDown" class="SelectorDropDown">
                         <option value="">Select...</option>
                         <?php 
                         //In future, pull from a Topping database for this.
@@ -104,13 +115,14 @@ and open the template in the editor.
                      
                  </div>
             </div>
-            <div style="font-size: medium; font-family:Comic Sans MS; font-weight: bold; color: white;">
-                <input type="radio" name="radToppingCoverage" value="whole" selected  /> Whole <br>
+            <div class="selectorSubWrapper">
+                <input type="radio" name="radToppingCoverage" value="whole" checked="checked"  /> Whole <br>
                 <input type="radio" name="radToppingCoverage" value="half" /> Half <br>
                 <input type="submit" name="formAddTopping" value="Add Topping" />
             <br><br>
             <input type="submit" name="formSubmitButton" value="Submit" />
                 
+            
             </div>
             
             <?php
