@@ -75,13 +75,35 @@ table, tr, td{
     padding: 5px;
     border-spacing: 20px;
     background-color: #333;
-    border: 1px solid black;
-    
+    border: 1px solid black;   
 }
         </style>
     </head>
     <body>
+         <?php
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $server = "pizzasite";
         
+        $dbLocalhost = mysql_connect($servername, $username, $password)
+                or die("Could not connect: " . mysql.error());
+        
+        mysql_select_db($server, $dbLocalhost)
+                or die("Could not find database: " . mysql_error());
+       // echo "<h1>Connected To Database</h1>";
+        
+        $dbNameRecords = mysql_query("SELECT NoodleType FROM pasta", $dbLocalhost)
+                or die("Problem reading table: " . mysql_error());
+        
+        
+       /* while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+        {
+            echo "<p>";
+            echo $arrNameRecords["Sauce"] . "</p>";
+        }*/
+        
+        ?>
             
         <ul>
             <a href="">
@@ -89,8 +111,8 @@ table, tr, td{
             </a>
             
             
-            <li style=""><a href="">Home</a></li>
-            <li><a href="">Pizza</a></li>
+            <li><a href="Index.php">Home</a></li>
+            <li><a href="Byop.php">Pizza</a></li>
             <li><a href="Pasta.php">Pasta</a></li>
             <li><a href="Sides.php">Sides</a></li>
             <li><a href="">Locations</a></li>
@@ -112,12 +134,89 @@ table, tr, td{
 <!--        <div class="content" style="background-color: #333">-->
             <table>
                 <tr>
-                    <td><a href="" >Dessert</a></td> 
-                    <td><a href="" >Wings</a></td> 
+                    <td>
+                        <a href="" >Dessert</a>
+                        <select>
+                                
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM sides WHERE Type = 'Dessert'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["Name"];
+//                                 if($arrNameRecords["Decription"] != "None")
+//                                 {
+//                                     echo " with ".$arrNameRecords["Decription"]." Sauce";
+//                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
+                    <td>
+                        <a href="" >Wings</a>
+                        <select>
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM sides WHERE Type = 'Wings'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["Name"];
+//                                 if($arrNameRecords["Decription"] != "None")
+//                                 {
+//                                     echo " with ".$arrNameRecords["Decription"]." Sauce";
+//                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
                 </tr>
                 <tr>
-                    <td><a href="" >Bread Sticks</a></td> 
-                    <td><a href="" >Drinks</a></td> 
+                    <td>
+                        <a href="" >Bread Sticks</a>
+                    <select>
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM sides WHERE Type = 'Bread'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["Name"];
+//                                 if($arrNameRecords["Decription"] != "None")
+//                                 {
+//                                     echo " with ".$arrNameRecords["Decription"]." Sauce";
+//                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
+                    <td>
+                        <a href="" >Drinks</a>
+                    <select>
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM sides WHERE Type = 'Soda'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["Name"];
+//                                 if($arrNameRecords["Decription"] != "None")
+//                                 {
+//                                     echo " with ".$arrNameRecords["Decription"]." Sauce";
+//                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
                 </tr>
             </table>
         <!--</div>-->

@@ -81,14 +81,38 @@ table, tr, td{
         </style>
     </head>
     <body>
+        <?php
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $server = "pizzasite";
+        
+        $dbLocalhost = mysql_connect($servername, $username, $password)
+                or die("Could not connect: " . mysql.error());
+        
+        mysql_select_db($server, $dbLocalhost)
+                or die("Could not find database: " . mysql_error());
+       // echo "<h1>Connected To Database</h1>";
+        
+        $dbNameRecords = mysql_query("SELECT NoodleType FROM pasta", $dbLocalhost)
+                or die("Problem reading table: " . mysql_error());
+        
+        
+       /* while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+        {
+            echo "<p>";
+            echo $arrNameRecords["Sauce"] . "</p>";
+        }*/
+        
+        ?>
         <ul>
             <a href="">
             <img src="images/logo.png" alt="Logo" float="left" width="230" class="logo">
             </a>
             
             
-            <li style=""><a href="">Home</a></li>
-            <li><a href="">Pizza</a></li>
+            <li style=""><a href="Index.php">Home</a></li>
+            <li><a href="Byop.php">Pizza</a></li>
             <li><a href="Pasta.php">Pasta</a></li>
             <li><a href="Sides.php">Sides</a></li>
             <li><a href="">Locations</a></li>
@@ -109,18 +133,99 @@ table, tr, td{
 <!--        <div class="content" style="background-color: #333">-->
             <table>
                 <tr>
-                    <td><a href="" >Fettuccine</a></td> 
-                    <td><a href="" >Farfalle</a></td> 
+                    <td>
+                        <a href="" >Fettuccine</a>
+                        <form action='<?php echo $_SERVER["PHP_SELF"]; ?>' method="post">
+                            <select>
+                                
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM pasta WHERE NoodleType = 'Fettuccine'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["NoodleType"];
+                                 if($arrNameRecords["Sauce"] != "None")
+                                 {
+                                     echo " with ".$arrNameRecords["Sauce"]." Sauce";
+                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                        </form>
+                    </td> 
+                    <td>
+                        <a href="" >Farfalle</a>
+                        <select>
+                                
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM pasta WHERE NoodleType = 'Farfalle'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["NoodleType"];
+                                 if($arrNameRecords["Sauce"] != "None")
+                                 {
+                                     echo " with ".$arrNameRecords["Sauce"]." Sauce";
+                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
                 </tr>
                 <tr>
-                    <td><a href="" >Penne</a></td> 
-                    <td><a href="" >Rigatoni</a></td> 
+                    <td>
+                        <a href="" >Penne</a>
+                        <select>
+                                
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM pasta WHERE NoodleType = 'Penne'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["NoodleType"];
+                                 if($arrNameRecords["Sauce"] != "None")
+                                 {
+                                     echo " with ".$arrNameRecords["Sauce"]." Sauce";
+                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
+                    <td>
+                        <a href="" >Rigatoni</a>
+                        <select>
+                                
+                                <?php 
+                                $dbNameRecords = mysql_query("SELECT * FROM pasta WHERE NoodleType = 'Rigatoni'", $dbLocalhost);
+                                while($arrNameRecords = mysql_fetch_array($dbNameRecords))
+                                {
+                                   
+                                 echo "<option>";
+                                 echo $arrNameRecords["NoodleType"];
+                                 if($arrNameRecords["Sauce"] != "None")
+                                 {
+                                     echo " with ".$arrNameRecords["Sauce"]." Sauce";
+                                 }
+                                 echo "</option>";
+                                }
+                                ?>
+                                
+                            </select>
+                    </td> 
                 </tr>
             </table>
         <!--</div>-->
-        <?php
-        // put your code here
-        ?>
+        
+        
         </header
     </body>
 </html>
