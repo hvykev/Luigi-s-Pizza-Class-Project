@@ -22,8 +22,8 @@
     </head>
     <body style="background-color: slategray">
         <div id="Header"></div> <!-- Placeholder for the navigation stuff. -->
-		<div id="Sidebar"></div> <!-- Similarly, have sidebar stuff go here. -->
-		<div id="Content"> <!-- For when this is actually made to matter - Again, through CSS. -->
+        <div id="Sidebar"></div> <!-- Similarly, have sidebar stuff go here. -->
+	<div id="Content"> <!-- For when this is actually made to matter - Again, through CSS. -->
         <div class='bordered'>
             <p>
             Picture the Perfect Pie
@@ -42,19 +42,18 @@
 				// THIS WILL BE REPLACED BY SESSION STUFF. ALSO CHECKBOXES.
 				//Part of the 'Code Relocation Project' aka 'this was at the end and it fit better at the start because of a check'.
 			
-				$arrCurrentToppings;
-				$strImplodedString;
+				$arrCurrentToppings = NULL;
 				//Grabbing the toppings from the hidden thingy.			
 				$strImplodedString = (isSet($_POST['transToppings']))?$_POST['transToppings']:"";	
 				if($strImplodedString != "")
 				{
-					$arrCurrentToppings[] = explode("|",$strImplodedString);
+					$arrCurrentToppings = explode("|",$strImplodedString);
 				}
 				//Adding the current topping to the end of the array now.
 				if(isSet($_POST["formAddTopping"]))
 				{
 					//Yay for shorthand 'if's.
-					$strToppingName = (isSet($_POST['formToppingDropDown']))? $_POST['formToppingDropDown'] : "";
+					$strToppingName = (isSet($_POST['formToppingDropDown']))?$_POST['formToppingDropDown']:"";
 					if($strToppingName != "")
 					{
 						$arrCurrentToppings[] = $strToppingName;
@@ -62,7 +61,7 @@
 				}
 			
 				if(count($arrCurrentToppings) > 0)
-				{				
+				{			
 					$strImplodedString = implode("|",$arrCurrentToppings);
 					echo "<input type='hidden' name='transToppings' value='$strImplodedString' />";
 				}				
@@ -131,17 +130,33 @@
                 </div>
                 <div>
                     <select name="formToppingDropDown" class="SelectorDropDown">
-                        <option value="">Select...</option>
                         <?php 
                         //In future, pull from the Toppings database for this. (Will do later today)
-                        $arrToppings = array("pepperoni"=>"Pepperoni","cheese"=>"Cheese","sausage"=>"Sausage","greenpeppers"=>"Green Bell Peppers","onions"=>"Onions");
+                        $arrToppings = array("pepperoni"=>"Pepperoni","cheese"=>"Cheese","sausage"=>"Sausage","greenbellpeppers"=>"Green Bell Peppers","onions"=>"Onions");
+                        $booNoUniqueToppings = true;
                         foreach($arrToppings as $topValue => $topName)
+                        {  
+                            if(!in_array($topValue,$arrCurrentToppings))
+                            { 
+                                $booNoUniqueToppings = false;
+                                break;
+                            }                         
+                        }
+                        if($booNoUniqueToppings == true)
                         {
-							//Seeing if the topping is already selected to avoid duplicates.
-							if(!in_array($topValue,$arrCurrentToppings))
-							{
-								echo "<option value='$topValue'>".$topName."</option>";
-							}
+                            echo "<option value=''>No toppings left!</option>";                            
+                        }
+                        else
+                        {                            
+                            echo "<option value=''>Select...</option>";
+                            foreach($arrToppings as $topValue => $topName)
+                            {
+                            				//Seeing if the topping is already selected to avoid duplicates.
+                            				if(!in_array($topValue,$arrCurrentToppings))
+                            				{
+                            					echo "<option value='$topValue'>".$topName."</option>";
+                            				}
+                            }
                         }
                         ?>
                     </select> 
@@ -223,7 +238,7 @@
         </form>
 		</div> <!-- Closing the 'Content' div. -->
 		
-        <div id="Footer></div> <!-- Placeholder for the footer, if one exists. -->
+        <div id="Footer"></div> <!-- Placeholder for the footer, if one exists. -->
         
     </body>
 </html>
