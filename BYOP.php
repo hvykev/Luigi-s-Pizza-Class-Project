@@ -1,4 +1,40 @@
-<!-- TODO: Initialize session, pull in any passed values if sent here from the cart (via a pizza click) or from Premade Pizzas (TBI) -->
+<!-- Session setup and required loading of CartItem, as we are storing those in the session variable 'Cart'. -->
+<?php 
+
+require_once("CartItem.php");
+session_start();
+//Database connection. Fail faster, etc.
+$dbMaster = mysql_connect("localhost","root","") 
+	or die("Failure to connect to database: " . mysql_error());
+
+$booCrustSelected = (isSet($_POST['formCrustDropDown']))?true:false;
+$booSizeSelected = (isSet($_POST['formSizeDropDown']))?true:false;
+
+//Pulling in the Crust and Size stuff.
+$pizzaCrust = (isSet($_POST['formCrustDropDown'])) ? $_POST['formCrustDropDown'] : "";
+$pizzaSize = (isSet($_POST['formSizeDropDown'])) ? $_POST['formSizeDropDown'] : "";
+//Also, the array of selected toppings.					
+$arrCurrentToppings = NULL;
+if(isSet($_POST["formAddTopping"]) or isSet($_POST["formSubmitButton"]))
+{
+	//Yay for shorthand 'if's Also, for using brakets in the name of a input group.
+	$arrCurrentToppings = (isSet($_POST['formToppingSelect']))?$_POST['formToppingSelect']:NULL;
+}
+
+//Also, re-direction for reasons.
+if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected) //If the 'Submit to Cart' button ahs been pressed..
+{
+	$dbTemp = mysql_query("SELECT ID FROM pizza bases WHERE CRUST = ".$pizzaCrust." AND WHERE SIZE = ".$pizzaSize, $dbMaster)
+	$intPizzaID;
+	while($arrRetrieved = mysql_fetch_array($dbTemp))
+    {
+		$intPizzaID = intval($arrRetrieved['ID']);
+	}
+	$tempPizza = CartItem::NewPizza($intPizzaID, $arrCurrentToppings);
+	$_SESSION['Cart'][] = $tempPizza;
+	header('Location: cart.php');
+}
+?>
 
 <!DOCTYPE html>
 
@@ -32,15 +68,40 @@
         <br>
         <form action='<?php echo $_SERVER["PHP_SELF"]; ?>' method="post" id="selectorWrapperMain">
             <?php
-				/* Setting up empty variables for the selectors to run off of. Also, pulling in values from POST if the values were set. TBI: Pull from session if sent here from the right places. */
-                $pizzaCrust = (isSet($_POST['formCrustDropDown'])) ? $_POST['formCrustDropDown'] : "";
-                //$pizzaSauce = (isSet($_POST['formSauceDropDown'])) ? $_POST['formSauceDropDown'] : "";
-                $pizzaSize = (isSet($_POST['formSizeDropDown'])) ? $_POST['formSizeDropDown'] : "";
-                $arrPizzatoppings;  
+				/* Pulling the options list from the database. */
 				
+                $arrToppings; 
+				$arrPizzaCrusts;
+				$arrPizzaSizes;
+				
+				//Filling in the option tables.
+				
+				//TOPPINGS
+				$dbTemp = mysql_query("SELECT ID, Name FROM toppings", $dbMaster)
+                   or die("Table read error: ".mysql_error());
+				while($arrRetrieved = mysql_fetch_array($dbTemp))
+                {
+					$arrToppings[] = $arrRetrieved['Name'];
+				}
+				
+				//CRUSTS
+				$dbTemp = mysql_query("SELECT DISTINCT CRUST FROM pizza bases", $dbMaster)
+                   or die("Table read error: ".mysql_error());
+				while($arrRetrieved = mysql_fetch_array($dbTemp))
+                {
+					$arrPizzaCrusts[] = $arrRetrieved['CRUST'];
+				}
+				
+				//SIZES
+				$dbTemp = mysql_query("SELECT DISTINCT SIZE FROM pizza bases", $dbMaster)
+                   or die("Table read error: ".mysql_error());
+				while($arrRetrieved = mysql_fetch_array($dbTemp))
+                {
+					$arrPizzaSizes[] = $arrRetrieved['SIZE'];
+				}
 				
 				// THIS WILL BE REPLACED BY SESSION STUFF. ALSO CHECKBOXES.
-				//Part of the 'Code Relocation Project' aka 'this was at the end and it fit better at the start because of a check'.
+				/*Part of the 'Code Relocation Project' aka 'this was at the end and it fit better at the start because of a check'. Being kept for posterity.
 			
 				$arrCurrentToppings = NULL;
 				//Grabbing the toppings from the hidden thingy.			
@@ -53,7 +114,7 @@
 				if(isSet($_POST["formAddTopping"]))
 				{
 					//Yay for shorthand 'if's.
-					$strToppingName = (isSet($_POST['formToppingDropDown']))?$_POST['formToppingDropDown']:"";
+					$strToppingName = (isSet($_POST['formToppingSelect']))?$_POST['formToppingDropDown']:"";
 					if($strToppingName != "")
 					{
 						$arrCurrentToppings[] = $strToppingName;
@@ -64,21 +125,35 @@
 				{			
 					$strImplodedString = implode("|",$arrCurrentToppings);
 					echo "<input type='hidden' name='transToppings' value='$strImplodedString' />";
-				}				
+				}	*/			
             ?>
             <div id="CrustSelector" class="selectorSubWrapper">
              <div id="CrustText" class="SelectorTextLabel">
-                Crust                
+                Crust
+				<?php 
+				if(!$booCrustSelected)
+				{
+					echo "<br /> Select a crust!";
+				}
+				?>               
              </div>
              <div>
                 <select name="formCrustDropDown" class="SelectorDropDown">
                     <option value="">Select...</option>
 					<!-- Will add this in later today - Pull in values from 'pizza bases' table in the database. -->
-                    <option <?php if($pizzaCrust == "Thin"){ echo "selected";} ?> value="Thin">Thin</option>
-                    <option <?php if($pizzaCrust == "Norm"){ echo "selected";} ?> value="Norm">Standard</option>
-                    <option <?php if($pizzaCrust == "Deep"){ echo "selected";} ?> value="Deep">Deep Dish</option>
-                    <option <?php if($pizzaCrust == "Stff"){ echo "selected";} ?> value="Stff">Stuffed</option>
-                    <option <?php if($pizzaCrust == "GlFr"){ echo "selected";} ?> value="GlFr">Gluten-Free</option>
+                    <?php
+					foreach($arrPizzaCrusts as $strCrust)
+					{
+						if($pizzaCrust ==$strCrust)
+						{
+							echo "<option 'selected' >$strCrust</option>";	
+						}
+						else	
+						{
+							echo "<option>$strCrust</option>";	
+						}					
+					}
+					?>
                 </select>
                  
                 <?php
@@ -105,18 +180,31 @@
             <div class='filler'></div> For the moment, though, sauce seems to be a stretch goal. -->
              <div id="SizeSelector" class="selectorSubWrapper">
              <div id="SizeText" class="SelectorTextLabel">
-                Size                
+                Size
+				<?php 
+				if(!$booSizeSelected)
+				{
+					echo "<br /> Select a size!";
+				}
+				?> 			
              </div>
              <div>
                 <select name="formSizeDropDown" class="SelectorDropDown">
                     <option value="">Select...</option>
 					<!-- Will add this in later today - Pull in values from 'pizza bases' table in the database. -->
-                    <option <?php if($pizzaSize == "Per"){ echo "selected";} ?> value="Per">Personal (6")</option>
-                    <option <?php if($pizzaSize == "Sml"){ echo "selected";} ?> value="Sml">Small (8")</option>
-                    <option <?php if($pizzaSize == "Med"){ echo "selected";} ?> value="Med">Medium (12")</option>
-                    <option <?php if($pizzaSize == "Lrg"){ echo "selected";} ?> value="Lrg">Large (16")</option>
-                    <option <?php if($pizzaSize == "Prt"){ echo "selected";} ?> value="Prt">Party (24")</option>
-                    <option <?php if($pizzaSize == "why"){ echo "selected";} ?> value="why">Giant (90")</option>
+					<?php
+					foreach($arrPizzaSizes as $strSize)
+					{
+						if($pizzaSize == $strSize)
+						{
+							echo "<option 'selected' >$strSize</option>";	
+						}
+						else	
+						{
+							echo "<option>$strSize</option>";	
+						}					
+					}
+					?>
                 </select>
                  
                 
@@ -129,58 +217,41 @@
                 Toppings                
                 </div>
                 <div>
-                    <select name="formToppingDropDown" class="SelectorDropDown">
-                        <?php 
-                        //In future, pull from the Toppings database for this. (Will do later today)
-                        $arrToppings = array("pepperoni"=>"Pepperoni","cheese"=>"Cheese","sausage"=>"Sausage","greenbellpeppers"=>"Green Bell Peppers","onions"=>"Onions");
-                        $booNoUniqueToppings = true;
-                        foreach($arrToppings as $topValue => $topName)
-                        {  
-                            if(!in_array($topValue,$arrCurrentToppings))
-                            { 
-                                $booNoUniqueToppings = false;
-                                break;
-                            }                         
-                        }
-                        if($booNoUniqueToppings == true)
+                    <?php 
+                    //arrToppings is now being pulled from the database.
+                    foreach($arrToppings as $topName)
+                    {
+                        //Seeing if the topping is already selected to keep it that way.
+                        if(!in_array($topName,$arrCurrentToppings))
                         {
-                            echo "<option value=''>No toppings left!</option>";                            
+                        	echo "<input type='checkbox' name='formToppingSelect[]'/>".$topName."<br />";
                         }
-                        else
-                        {                            
-                            echo "<option value=''>Select...</option>";
-                            foreach($arrToppings as $topValue => $topName)
-                            {
-                            				//Seeing if the topping is already selected to avoid duplicates.
-                            				if(!in_array($topValue,$arrCurrentToppings))
-                            				{
-                            					echo "<option value='$topValue'>".$topName."</option>";
-                            				}
-                            }
-                        }
-                        ?>
-                    </select> 
-					<input type="submit" name="formAddTopping" value="Add Topping" /> <!-- Adding the 'Add Topping' button to here, as half/whole are not being bothered with. -->
+						else
+						{
+                        	echo "<input type='checkbox' name='formToppingSelect[]' checked='checked'/>".$topName."<br />";                           
+						}
+                    }
+                    ?>
+					<input type="submit" name="formAddTopping" value="Update Toppings" /> <!-- Adding the 'Add Topping' button to here, as half/whole are not being bothered with. -->
                 </div>
                  <div style="float:left;">
                      
                  </div>
             </div>
-            <!-- Out of scope. 
+            
 			<div class="selectorSubWrapper">
+			<!-- Out of scope. 
                 <input type="radio" name="radToppingCoverage" value="whole" checked="checked"  /> Whole <br>
                 <input type="radio" name="radToppingCoverage" value="half" /> Half <br>
                 <input type="submit" name="formAddTopping" value="Add Topping" />
-            <br><br>
-            <input type="submit" name="formSubmitButton" value="Submit" />
+            <br><br>			
+			-->		
+            <input type="submit" name="formSubmitButton" value="Submit Pizza to Cart" />
                 
             
             </div>
-			-->
             
             <?php
-			
-			
             /* This version of recently past me missed one major advantage of array simplification. Also, there were better places to put the code for this.			
             $intNumToppings;
             if(isSet($_POST['transNumToppings']))
