@@ -1,11 +1,11 @@
 <!-- Session setup and required loading of CartItem, as we are storing those in the session variable 'Cart'. -->
 <?php 
 
+require_once("LuigiPizzaDB_Connect.php");
 require_once("CartItem.php");
 session_start();
+
 //Database connection. Fail faster, etc.
-$dbMaster = mysql_connect("localhost","root","") 
-	or die("Failure to connect to database: " . mysql_error());
 
 $booCrustSelected = (isSet($_POST['formCrustDropDown']))?true:false;
 $booSizeSelected = (isSet($_POST['formSizeDropDown']))?true:false;
@@ -14,19 +14,20 @@ $booSizeSelected = (isSet($_POST['formSizeDropDown']))?true:false;
 $pizzaCrust = (isSet($_POST['formCrustDropDown'])) ? $_POST['formCrustDropDown'] : "";
 $pizzaSize = (isSet($_POST['formSizeDropDown'])) ? $_POST['formSizeDropDown'] : "";
 //Also, the array of selected toppings.					
-$arrCurrentToppings = NULL;
+$arrCurrentToppings = array();
 if(isSet($_POST["formAddTopping"]) or isSet($_POST["formSubmitButton"]))
 {
 	//Yay for shorthand 'if's Also, for using brakets in the name of a input group.
-	$arrCurrentToppings = (isSet($_POST['formToppingSelect']))?$_POST['formToppingSelect']:NULL;
+	$arrCurrentToppings = (isSet($_POST['formToppingSelect']))?$_POST['formToppingSelect']:array();
 }
 
 //Also, re-direction for reasons.
 if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected) //If the 'Submit to Cart' button ahs been pressed..
 {
-	$dbTemp = mysql_query("SELECT ID FROM pizza bases WHERE CRUST = ".$pizzaCrust." AND WHERE SIZE = ".$pizzaSize, $dbMaster)
+	$dbTemp = mysqli_query($dbMaster, "SELECT ID FROM pizza_bases WHERE CRUST = '".$pizzaCrust."' AND SIZE = '".$pizzaSize."'")
+                or die("Error retreiving data: ".mysqli_error());
 	$intPizzaID;
-	while($arrRetrieved = mysql_fetch_array($dbTemp))
+	while($arrRetrieved = mysqli_fetch_assoc($dbTemp))
     {
 		$intPizzaID = intval($arrRetrieved['ID']);
 	}
@@ -77,25 +78,25 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
 				//Filling in the option tables.
 				
 				//TOPPINGS
-				$dbTemp = mysql_query("SELECT ID, Name FROM toppings", $dbMaster)
-                   or die("Table read error: ".mysql_error());
-				while($arrRetrieved = mysql_fetch_array($dbTemp))
+				$dbTemp = mysqli_query($dbMaster, "SELECT ID, Name FROM toppings")
+                   or die("Table read error: ".mysqli_error());
+				while($arrRetrieved = mysqli_fetch_assoc($dbTemp))
                 {
-					$arrToppings[] = $arrRetrieved['Name'];
+					$arrToppings[intval($arrRetrieved['ID'])] = $arrRetrieved['Name'];
 				}
 				
 				//CRUSTS
-				$dbTemp = mysql_query("SELECT DISTINCT CRUST FROM pizza bases", $dbMaster)
-                   or die("Table read error: ".mysql_error());
-				while($arrRetrieved = mysql_fetch_array($dbTemp))
+				$dbTemp = mysqli_query($dbMaster, "SELECT DISTINCT CRUST FROM pizza_bases")
+                   or die("Table read error: ".mysqli_error());
+				while($arrRetrieved = mysqli_fetch_assoc($dbTemp))
                 {
 					$arrPizzaCrusts[] = $arrRetrieved['CRUST'];
 				}
 				
 				//SIZES
-				$dbTemp = mysql_query("SELECT DISTINCT SIZE FROM pizza bases", $dbMaster)
-                   or die("Table read error: ".mysql_error());
-				while($arrRetrieved = mysql_fetch_array($dbTemp))
+				$dbTemp = mysqli_query($dbMaster, "SELECT DISTINCT SIZE FROM pizza_bases")
+                   or die("Table read error: ".mysqli_error());
+				while($arrRetrieved = mysqli_fetch_assoc($dbTemp))
                 {
 					$arrPizzaSizes[] = $arrRetrieved['SIZE'];
 				}
@@ -133,7 +134,7 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
 				<?php 
 				if(!$booCrustSelected)
 				{
-					echo "<br /> Select a crust!";
+					echo "<br> Select a crust!";
 				}
 				?>               
              </div>
@@ -144,9 +145,9 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
                     <?php
 					foreach($arrPizzaCrusts as $strCrust)
 					{
-						if($pizzaCrust ==$strCrust)
+						if($pizzaCrust == $strCrust)
 						{
-							echo "<option 'selected' >$strCrust</option>";	
+							echo "<option selected >$strCrust</option>";	
 						}
 						else	
 						{
@@ -155,9 +156,7 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
 					}
 					?>
                 </select>
-                 
-                <?php
-                ?>
+               
              </div>
             </div>
             <div class='filler'></div>
@@ -184,7 +183,7 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
 				<?php 
 				if(!$booSizeSelected)
 				{
-					echo "<br /> Select a size!";
+					echo "<br> Select a size!";
 				}
 				?> 			
              </div>
@@ -192,19 +191,19 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
                 <select name="formSizeDropDown" class="SelectorDropDown">
                     <option value="">Select...</option>
 					<!-- Will add this in later today - Pull in values from 'pizza bases' table in the database. -->
-					<?php
-					foreach($arrPizzaSizes as $strSize)
+			<?php
+				foreach($arrPizzaSizes as $strSize)
+				{
+                                	if($pizzaSize == $strSize)
 					{
-						if($pizzaSize == $strSize)
-						{
-							echo "<option 'selected' >$strSize</option>";	
-						}
-						else	
-						{
-							echo "<option>$strSize</option>";	
-						}					
+						echo "<option selected >$strSize</option>";	
 					}
-					?>
+					else	
+					{
+						echo "<option>$strSize</option>";	
+					}					
+				}
+			?>
                 </select>
                  
                 
@@ -219,16 +218,16 @@ if(isSet($_POST['formSubmitButton']) and $booCrustSelected and $booSizeSelected)
                 <div>
                     <?php 
                     //arrToppings is now being pulled from the database.
-                    foreach($arrToppings as $topName)
+                    foreach($arrToppings as $topNum=>$topName)
                     {
                         //Seeing if the topping is already selected to keep it that way.
-                        if(!in_array($topName,$arrCurrentToppings))
+                        if(!in_array($topNum,$arrCurrentToppings))
                         {
-                        	echo "<input type='checkbox' name='formToppingSelect[]'/>".$topName."<br />";
+                        	echo "<input type='checkbox' name='formToppingSelect[]' value='$topNum'/>".$topName."<br />";
                         }
 						else
 						{
-                        	echo "<input type='checkbox' name='formToppingSelect[]' checked='checked'/>".$topName."<br />";                           
+                        	echo "<input type='checkbox' name='formToppingSelect[]' checked='checked' value='$topNum'/>".$topName."<br />";                           
 						}
                     }
                     ?>

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 06, 2016 at 05:34 PM
+-- Generation Time: Apr 13, 2016 at 11:24 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 5.6.15
 
@@ -23,16 +23,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pizza bases`
+-- Table structure for table `pizza_bases`
 --
 
-CREATE TABLE `pizza bases` (
+CREATE TABLE `pizza_bases` (
   `ID` int(11) NOT NULL,
   `Name` varchar(25) NOT NULL,
   `Price` float NOT NULL,
   `CRUST` varchar(20) NOT NULL,
   `SIZE` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `pizza_bases`
+--
+
+INSERT INTO `pizza_bases` (`ID`, `Name`, `Price`, `CRUST`, `SIZE`) VALUES
+(1, 'Small Thin Crust', 5.75, 'THIN', 'SMALL'),
+(2, 'Small Standard Crust', 5.75, 'STANDARD', 'SMALL'),
+(3, 'Small Deep-Dish', 6.75, 'DEEP-DISH', 'SMALL'),
+(4, 'Small Gluten-Free', 6.75, 'GLUTEN FREE', 'SMALL');
 
 -- --------------------------------------------------------
 
@@ -56,18 +66,29 @@ CREATE TABLE `sides` (
 CREATE TABLE `toppings` (
   `ID` int(11) NOT NULL,
   `Name` varchar(30) NOT NULL,
-  `Price` int(11) NOT NULL,
+  `Price` float NOT NULL,
   `Type` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `toppings`
+--
+
+INSERT INTO `toppings` (`ID`, `Name`, `Price`, `Type`) VALUES
+(1, 'Pepperoni', 0.25, 'MEAT'),
+(2, 'Onions', 0.25, 'VEGETABLE'),
+(3, 'Mushrooms', 0.35, 'VEGETABLE'),
+(4, 'Cheddar', 0.15, 'CHEESE'),
+(5, 'Motzerella', 0.15, 'CHEESE');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `pizza bases`
+-- Indexes for table `pizza_bases`
 --
-ALTER TABLE `pizza bases`
+ALTER TABLE `pizza_bases`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -87,10 +108,10 @@ ALTER TABLE `toppings`
 --
 
 --
--- AUTO_INCREMENT for table `pizza bases`
+-- AUTO_INCREMENT for table `pizza_bases`
 --
-ALTER TABLE `pizza bases`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `pizza_bases`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `sides`
 --
@@ -100,7 +121,7 @@ ALTER TABLE `sides`
 -- AUTO_INCREMENT for table `toppings`
 --
 ALTER TABLE `toppings`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
