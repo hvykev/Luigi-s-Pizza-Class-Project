@@ -105,11 +105,15 @@
                 {
                     if(in_array($arrRetrieved['ID'], $this->arrToppings))
                     {
-                        echo $arrRetrieved['Name'].", ";
+                        echo $arrRetrieved['Name'];
                         $intAndCounter--;
                         if($intAndCounter == 1)
                         {
-                            echo "and ";
+                            echo " and ";
+                        }
+                        else
+                        {
+                            echo ", ";
                         }
                     }
                 }

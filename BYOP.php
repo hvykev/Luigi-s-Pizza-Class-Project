@@ -7,8 +7,23 @@ session_start();
 
 //Database connection. Fail faster, etc.
 
-$booCrustSelected = (isSet($_POST['formCrustDropDown']))?true:false;
-$booSizeSelected = (isSet($_POST['formSizeDropDown']))?true:false;
+if(isSet($_POST['formCrustDropDown']))
+{
+    $booCrustSelected = $_POST['formCrustDropDown'] != "";    
+}
+else
+{
+    $booCrustSelected = false;
+}
+
+if(isSet($_POST['formSizeDropDown']))
+{
+    $booSizeSelected = $_POST['formSizeDropDown'] != "";    
+}
+else
+{
+    $booSizeSelected = false;
+}
 
 //Pulling in the Crust and Size stuff.
 $pizzaCrust = (isSet($_POST['formCrustDropDown'])) ? $_POST['formCrustDropDown'] : "";
